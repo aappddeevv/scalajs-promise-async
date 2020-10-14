@@ -16,8 +16,8 @@ As of scala-async 1.0, Scala 2.12.12+ or 2.13.3+ are required.
 #### SBT Example
 
 ```scala
-libraryDependencies += "ttg.scalajs" %%% "scalajs-promise-async" % "0.1.0"
-libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
+resolvers += Resolver.bintrayRepo("aappddeevv", "maven")
+libraryDependencies += "ttg" %%% "scalajs-promise-async" % "0.1.0"
 ```
 ### Enable compiler support for `async`
 

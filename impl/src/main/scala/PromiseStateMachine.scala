@@ -18,7 +18,7 @@ abstract class PromiseStateMachine() extends (js.Thenable[AnyRef] => Unit) {
   private[this] var errorValue: AnyRef = null
   private[this] val result$async: js.Promise[AnyRef] = new js.Promise[AnyRef]({
     (s, f) =>
-      println(">result$async init")
+      println(">init")
       succeed = (result: AnyRef) => {
         resultValue = result
         errorValue = null
@@ -39,38 +39,42 @@ abstract class PromiseStateMachine() extends (js.Thenable[AnyRef] => Unit) {
   def apply(tr$async: js.Thenable[AnyRef]): Unit
 
   protected def completeFailure(t: Throwable): Unit = {
-    println(">completeFailure")
+    println(s">completeFailure: $t")
     // unwrap?
     fail(t)
     //throw t
   }
   protected def completeSuccess(value: AnyRef): Unit = {
-    println(">completeSuccess")
+    println(s">completeSuccess: $value")
     succeed(value)
   }
   protected def onComplete(f: js.Thenable[AnyRef]): Unit = {
-    println(">onCompleted called")
+    println(s">onCompleted called: $f")
     val resolve: RESOLVE[AnyRef, AnyRef] = (v: AnyRef) => succeed(v)
     val reject: REJECTED[AnyRef] = (err: Any) => {
       fail(err.asInstanceOf[AnyRef]); err.asInstanceOf[AnyRef]
     }
     f.`then`(resolve, js.defined(reject))
+    // val resolve: RESOLVE[AnyRef, AnyRef] = (v: AnyRef) => f
+    // f.`then`(resolve)
   }
   protected def getCompleted(f: js.Promise[AnyRef]) = {
-    println(">getCompleted")
-    null
-    //f
+    println(s">getCompleted: $f")
+    //null
+    f
   }
+
   protected def tryGet(tr: js.Promise[AnyRef]): AnyRef = {
-    println(">tryGet")
+    println(s">tryGet: $tr")
     tr
+    // this is a sentinel value that the FSM should exit, which we don't want want to
     //this
   }
 
   def start[T](): js.Promise[T] = {
     println(">start called")
-    // No real action here as the promise, `result$async`, starts eagerly on its own
-    // inside this class but waits on the completion callbacks to be called.
+    apply(null) // start the FSM loop
     result$async.asInstanceOf[js.Promise[T]]
   }
+
 }

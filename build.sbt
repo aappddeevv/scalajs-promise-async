@@ -18,7 +18,15 @@ lazy val root = project
 lazy val tests = project
   .settings(
     scalacOptions in Test ++= Seq("-Yrangepos"),
-    scalacOptions ++= List("-deprecation", "-Xasync"),
+    scalacOptions ++= List(
+      "-deprecation",
+      "-Xasync",
+      //"-Xprint:1-14",
+      "-language:_"
+      //   "-Vprint:erasure",
+      //   "-Yprint-trees:format",
+      //   "-Ymacro-debug-verbose"
+    ),
     // https://github.com/lihaoyi/utest
     libraryDependencies += "com.lihaoyi" %%% "utest" % "0.7.5" % "test",
     testFrameworks += new TestFramework("utest.runner.Framework")
